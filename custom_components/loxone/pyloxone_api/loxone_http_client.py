@@ -43,7 +43,7 @@ class LoxoneAsyncHttpClient:
     async def get(self, endpoint):
         url = f"{self.base_url}{endpoint}"
         response = await self.session.get(
-            url, auth=aiohttp.BasicAuth(self.username, self.password)
+            url, auth=aiohttp.BasicAuth(self.username, self.password), ssl=False
         )
         if response.status != 200:
             await self._handle_error(response)
