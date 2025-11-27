@@ -28,7 +28,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
 from Crypto.Util import Padding
 
-from .const import (
+from custom_components.loxone.const import (
     AES_KEY_SIZE,
     CMD_AUTH_WITH_TOKEN,
     CMD_ENABLE_UPDATES,
