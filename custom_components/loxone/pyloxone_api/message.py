@@ -91,8 +91,31 @@ class LLResponse:
     """
 
     def __init__(self, response: str | bytes):
+        # Normalize to string first (handles bytes, encoding detection, etc.)
+        text = check_and_decode_if_needed(response)
+
+        # Safely handle None or non-string results
+        if text is None:
+            raise ValueError("Empty LL response (None)")
+
+        if not isinstance(text, str):
+            text = str(text)
+
+        # Strip BOM if present and surrounding whitespace/newlines
+        text = text.lstrip("\ufeff").strip()
+
+        # Quick sanity check before attempting JSON parse
+        if not text:
+            raise ValueError("Empty LL response after stripping whitespace")
+
+        # Heuristic: valid LL JSON should start with '{'
+        if not text.startswith("{"):
+            # Provide a short preview to aid debugging without flooding logs
+            preview = text[:200]
+            raise ValueError(f"Non-JSON LL response (starts with {repr(text[:10])}): {preview}")
+
         try:
-            self._parsed: dict = json.loads(response)
+            self._parsed: dict = json.loads(text)
             # Sometimes, Loxone uses "Code", and sometimes "code"
             self.code: int = int(
                 self._parsed.get("LL", {}).get("code", "")
@@ -100,8 +123,13 @@ class LLResponse:
             )
             self.control: str = self._parsed["LL"]["control"]
             self.value: str = str(self._parsed["LL"]["value"])
-        except (ValueError, KeyError, TypeError) as exc:
-            raise ValueError(exc)
+        except json.JSONDecodeError as exc:
+            preview = text[:200]
+            raise ValueError(f"Failed to decode LL JSON: {exc}: {preview}") from exc
+        except (KeyError, TypeError, ValueError) as exc:
+            # Preserve previous behaviour of raising ValueError while
+            # ensuring message is explicit enough for debugging.
+            raise ValueError(f"Invalid LL response structure: {exc}") from exc
 
     @property
     def value_as_dict(self) -> dict:
