@@ -9,6 +9,7 @@ import asyncio
 import hashlib
 import json
 import logging
+import ssl
 import time
 import urllib
 from base64 import b64decode, b64encode
@@ -80,6 +81,7 @@ class LoxoneBaseConnection:
         token: Optional[dict] = None,
         port: int = 8080,
         timeout: Optional[float] = None,
+        ssl_verify: bool = True,
     ):
         self.host = host
         self.username = username
@@ -91,6 +93,7 @@ class LoxoneBaseConnection:
         self._recv_loop: Optional[Any] = None
         self._pending_task = []
         self._closed = False
+        self._ssl_verify = ssl_verify
 
         # Parse the server input to extract scheme if present
         parsed = urlparse(host if "://" in host else f"//{host}", scheme="")
