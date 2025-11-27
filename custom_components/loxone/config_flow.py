@@ -16,7 +16,7 @@ from homeassistant.core import callback
 
 from .const import (CONF_LIGHTCONTROLLER_SUBCONTROLS_GEN, CONF_SCENE_GEN,
                     CONF_SCENE_GEN_DELAY, DEFAULT_DELAY_SCENE, DEFAULT_IP,
-                    DEFAULT_PORT, DOMAIN, CONF_SSL_VERIFY)
+                    DEFAULT_PORT, DOMAIN)
 
 LOXONE_SCHEMA = vol.Schema(
     {
@@ -27,7 +27,6 @@ LOXONE_SCHEMA = vol.Schema(
         vol.Required(CONF_SCENE_GEN, default=True): bool,
         vol.Optional(CONF_SCENE_GEN_DELAY, default=DEFAULT_DELAY_SCENE): int,
         vol.Required(CONF_LIGHTCONTROLLER_SUBCONTROLS_GEN, default=False): bool,
-        vol.Required(CONF_SSL_VERIFY, default=True): bool,
     }
 )
 
@@ -81,7 +80,6 @@ class LoxoneOptionsFlowHandler(OptionsFlow):
         gen_subcontrols = self.config_entry.options.get(
             CONF_LIGHTCONTROLLER_SUBCONTROLS_GEN, False
         )
-        ssl_verify = self.config_entry.options.get(CONF_SSL_VERIFY, True)
 
         options = OrderedDict()
 
@@ -94,7 +92,6 @@ class LoxoneOptionsFlowHandler(OptionsFlow):
         options[
             vol.Required(CONF_LIGHTCONTROLLER_SUBCONTROLS_GEN, default=gen_subcontrols)
         ] = bool
-        options[vol.Required(CONF_SSL_VERIFY, default=ssl_verify)] = bool
 
         return self.async_show_form(
             step_id="init",
