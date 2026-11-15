@@ -26,6 +26,7 @@ LOXONE_PLATFORMS: Final[list[Platform]] = [
     Platform.SELECT,
     Platform.TEXT,
     Platform.TIME,
+    Platform.REMOTE,
 ]
 
 LOXONE_DEFAULT_PORT = 8080
