@@ -257,6 +257,14 @@ WINDOW_TYPES = {
 }
 
 
+def _window_type(raw: object) -> str | None:
+    """Map a raw Loxone window type (state or details.type) to its name."""
+    try:
+        return WINDOW_TYPES.get(int(float(raw)))
+    except (TypeError, ValueError):
+        return None
+
+
 class LoxoneWindow(LoxoneEntity, CoverEntity):
     # pylint: disable=no-self-use
     def __init__(self, **kwargs):
@@ -268,7 +276,9 @@ class LoxoneWindow(LoxoneEntity, CoverEntity):
         self._closed = None
         self._direction = 0
         self._locked_reason = None
-        self._window_type = None
+        # Real structures often carry the type only in details.type, without
+        # the "type" state; the state (when present) overrides it.
+        self._window_type = _window_type((getattr(self, "details", None) or {}).get("type"))
 
         self.type = "Window"
         self._attr_device_info = get_or_create_device(
@@ -310,11 +320,7 @@ class LoxoneWindow(LoxoneEntity, CoverEntity):
                 self._locked_reason = str(reason) if reason else None
 
             if type_uuid and type_uuid in e.data:
-                try:
-                    raw_type = int(float(e.data[type_uuid]))
-                except (TypeError, ValueError):
-                    raw_type = None
-                self._window_type = WINDOW_TYPES.get(raw_type)
+                self._window_type = _window_type(e.data[type_uuid])
 
             self.schedule_update_ha_state()
 
@@ -434,8 +440,8 @@ class LoxoneWindow(LoxoneEntity, CoverEntity):
         )
 
     def slightly_open(self, **kwargs: Any) -> None:
-        """Move the window to its partially open position (spec: slightlyOpen)."""
-        self.hass.bus.fire(SENDDOMAIN, dict(uuid=self.uuidAction, value="slightlyOpen"))
+        """Move the window to its partially open position (spec: slightlyOpen/)."""
+        self.hass.bus.fire(SENDDOMAIN, dict(uuid=self.uuidAction, value="slightlyOpen/"))
 
 
 class LoxoneJalousie(LoxoneEntity, CoverEntity):
