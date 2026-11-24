@@ -180,5 +180,15 @@
       "name": "Übersteuerung beenden",
       "description": "Eine laufende Übersteuerung einer Loxone Schaltuhr beenden."
     }
+  },
+  "issues": {
+    "loxone_status": {
+      "title": "{title}",
+      "description": "{description}"
+    },
+    "loxone_device_status": {
+      "title": "{title}: {name}",
+      "description": "{description}"
+    }
   }
 }
