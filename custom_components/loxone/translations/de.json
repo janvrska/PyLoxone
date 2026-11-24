@@ -210,6 +210,14 @@
     "remote_connect_denied": {
       "title": "Loxone Remote Connect hat die Verbindung abgelehnt ({title})",
       "description": "Loxone Remote Connect hat die Adresse des Miniservers nicht herausgegeben (Status {code}):\n\n> {message}\n\nDie Integration verbindet sich nicht mehr. Verbinde dich über das lokale Netzwerk (Host = lokale IP-Adresse des Miniservers) oder über ein VPN in sein Netzwerk und lade die Integration neu."
+    },
+    "loxone_status": {
+      "title": "{title}",
+      "description": "{description}"
+    },
+    "loxone_device_status": {
+      "title": "{title}: {name}",
+      "description": "{description}"
     }
   }
 }
